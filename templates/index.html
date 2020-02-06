@@ -1,25 +1,27 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html>
-    <head>
-        <Title>Whitelist Maintenance</title>
-    </head>
-    <body>
-        <H1>Whitelist Maintenance</H1>
-        {% for item in whitelisted_addresses %}
+{% block content %}
+        <H3>Current Whitelist - BAM </H3>
 
-        <table border="1">
+        <table class="table">
+            <thead>
             <tr>
+                <th>Name</th>
+                <th>IP Address</th>
+                <th>description</th>
+            </tr>
+            </thead>
+        {% for item in whitelisted_addresses %}
+        
+          <tr>
             <td>{{ item.name }}</td>
             <td>{{ item.address }}</td>
             <td>{{ item.organization }}</td>
         </tr>
 
-        </table>
-        {% endfor %}
-    </body>
-   
-    
 
+        
+        {% endfor %}
+    </table>
     
-</html>
+{% endblock content %}
