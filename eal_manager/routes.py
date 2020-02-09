@@ -1,19 +1,7 @@
-from flask import Flask, render_template, flash, redirect, url_for
-from forms import RegistrationForm, CreateAddress, LoginForm
-from flask_sqlalchemy import SQLAlchemy
-from models import User, IPAddress
-
-# initializes our Flask Application, creates a CSRF key to protect forms and
-# initializes the sqlite database. 
-
-app = Flask(__name__)
-app.config['SECRET_KEY'] = '089uyt8654dvb543giklu8!o.76453swd2'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///addresses.db'
-db = SQLAlchemy(app)
-
-
-
-
+from flask import render_template, flash, redirect, url_for
+from eal_manager.forms import RegistrationForm, CreateAddress, LoginForm
+from eal_manager.models import User, IPAddress
+from eal_manager import app
 
 whitelisted_addresses=[ 
     { 'name': 'ip1',
@@ -62,7 +50,3 @@ def createaddress():
     if form.is_submitted():
         flash(f'Account created for {form.address.data}!', 'success')
     return render_template('createaddress.html', title='Create Address', form=form)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

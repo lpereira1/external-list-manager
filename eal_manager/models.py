@@ -1,4 +1,4 @@
-from address_generator import db 
+from eal_manager import db 
 from datetime import datetime
 
 
