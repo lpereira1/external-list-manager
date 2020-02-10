@@ -1,6 +1,6 @@
-from eal_manager import db 
+from eal_manager import db, login_manager
 from datetime import datetime
-
+from flask_login import UserMixin
 
 # Creates Database Columns based on Models. There are user who create address and 
 # those addresses are part of an organization.
@@ -8,8 +8,16 @@ from datetime import datetime
 # UNIQUE constraint failed: user.image_file
 # user_2 = User(email='lazaro.pereira@gmail.com', password='Lazaro1')
 
-class User(db.Model):
+
+@login_manager.user_loader
+def load_user(email_id):
+    return User.query.get(int(email_id))
+
+
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(140), nullable=False)
+    last_name = db.Column(db.String(140), nullable=False)
     email = db.Column(db.String(140), unique=True, nullable=False)
     image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60), nullable=False)
