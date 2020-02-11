@@ -1,6 +1,6 @@
 from eal_manager import db, login_manager
 from datetime import datetime
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 
 # Creates Database Columns based on Models. There are user who create address and 
 # those addresses are part of an organization.
@@ -27,12 +27,12 @@ class User(db.Model, UserMixin):
         return f'User("{self.email}", "{self.image_file}")'
 
 class IPAddress(db.Model):   
-    id = db.Column(db.Integer, primary_key=True)
-    address = db.Column(db.String(20)) 
+    address_id = db.Column(db.Integer, primary_key=True)
+    address = db.Column(db.String(30)) 
     name = db.Column(db.String(255))
     organization = db.Column(db.String(255))
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False )
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
     
     def __repr__(self):
         return f'User("{self.address}","{self.name}", "{self.organization}", "{self.date_created})'

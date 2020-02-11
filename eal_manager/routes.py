@@ -1,5 +1,8 @@
+import secrets
+from PIL import Image
+import os
 from flask import render_template, flash, redirect, url_for, request
-from eal_manager.forms import RegistrationForm, CreateAddress, LoginForm
+from eal_manager.forms import RegistrationForm, CreateAddress, LoginForm, UpdateAccountForm
 from eal_manager.models import User, IPAddress
 from eal_manager import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
@@ -60,20 +63,55 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
+    
     return redirect(url_for('startpage'))
 
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    f_name, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_pictures/' + picture_fn)
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+    
+    return picture_fn 
 
-@app.route("/account")
+
+@app.route("/account", methods=['POST', 'GET'])
 @login_required
 def account():
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.user_picture.data: 
+            picture_file = save_picture(form.user_picture.data)
+            current_user.image_file = picture_file
+        current_user.email = form.email.data
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        db.session.commit()
+        flash('Your account has been updated', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.email.data = current_user.email
+        form.first_name.data = current_user.first_name
+        form.last_name.data = current_user.last_name
     image_file = url_for('static', filename='profile_pictures/' + current_user.image_file)
-    return render_template('account.html', title='Account', image_file=image_file)
+    return render_template('account.html', title='Account', image_file=image_file, form=form)
 
 
 
 @app.route("/create/address", methods=['POST', 'GET'])
+@login_required
 def createaddress():
     form = CreateAddress()
-    if form.is_submitted():
-        flash(f'Account created for {form.address.data}!', 'success')
-    return render_template('createaddress.html', title='Create Address', form=form)
+    if form.validate_on_submit():
+        address = IPAddress(address= form.address.data, name= form.name.data, organization=form.organization.data, creator_id = current_user.first_name + current_user.last_name )
+        db.session.add(address)
+        db.session.commit()
+        flash(f'Whitelist updated with {form.address.data}!', 'success')
+    return render_template('createaddress.html', title='startpage', form=form)
+
+
+    
