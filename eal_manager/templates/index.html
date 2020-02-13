@@ -1,14 +1,18 @@
 {% extends "layout.html" %}
 
 {% block content %}
-        <H3>Current Whitelist - BAM </H3>
+        <H3>Address Managment Page </H3>
 
-        <table class="table">
-            <thead>
+        <p>This tool enables easy additions to address whitelist for firewalls. </p>
+
+        <table class="table table-sm">
+            <thead class="thead-dark">
             <tr>
                 <th>Name</th>
                 <th>IP Address</th>
-                <th>description</th>
+                <th>Organization</th>
+                <th>Created By</th>
+                <th>Created On</th>
             </tr>
             </thead>
         {% for item in whitelisted_addresses %}
@@ -17,6 +21,8 @@
             <td>{{ item.name }}</td>
             <td>{{ item.address }}</td>
             <td>{{ item.organization }}</td>
+            <td>{{ item.creator_id }}</td>
+            <td>{{ item.date_created.strftime('%Y-%m-%d  %H:%M') }} UTC </td>
         </tr>
 
 

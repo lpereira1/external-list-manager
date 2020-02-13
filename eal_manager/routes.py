@@ -8,24 +8,10 @@ from eal_manager import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
 
 
-whitelisted_addresses=[ 
-    { 'name': 'ip1',
-    'organization':'bobs burgers',
-    'address': '10.10.10.10/32'
-    },
-    { 'name' : 'ip2',
-    'organization': 'bobs burgers',
-    'address': '10.10.10.20/32'
-    },
-    { 'name': 'ip3',
-    'organization':'bobs burgers',
-    'address': '10.10.10.30/32'
-    },
-]
-
 
 @app.route("/")
 def startpage():
+    whitelisted_addresses = IPAddress.query.all()
     return render_template('index.html', whitelisted_addresses=whitelisted_addresses)
 
 @app.route("/register", methods=['POST', 'GET'])
@@ -107,7 +93,7 @@ def account():
 def createaddress():
     form = CreateAddress()
     if form.validate_on_submit():
-        address = IPAddress(address= form.address.data, name= form.name.data, organization=form.organization.data, creator_id = current_user.first_name + current_user.last_name )
+        address = IPAddress(address= form.address.data, name= form.name.data, organization=form.organization.data, creator_id = current_user.first_name + ' ' + current_user.last_name )
         db.session.add(address)
         db.session.commit()
         flash(f'Whitelist updated with {form.address.data}!', 'success')
