@@ -10,8 +10,10 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 
 @app.route("/")
+@login_required
 def startpage():
-    whitelisted_addresses = IPAddress.query.all()
+    page = request.args.get('page', 1, type=int)
+    whitelisted_addresses = IPAddress.query.order_by(IPAddress.date_created.desc()).paginate(page=page, per_page=20)
     return render_template('index.html', whitelisted_addresses=whitelisted_addresses)
 
 @app.route("/register", methods=['POST', 'GET'])
@@ -88,10 +90,11 @@ def account():
 
 
 
-@app.route("/create/address", methods=['POST', 'GET'])
+@app.route("/address", methods=['POST', 'GET'])
 @login_required
 def createaddress():
     form = CreateAddress()
+    form.submit.label.text = 'Create Address'
     if form.validate_on_submit():
         address = IPAddress(address= form.address.data, 
                             name= form.name.data, 
@@ -117,6 +120,9 @@ def update_addr(addr_id):
     # if address.creator_id.permissions != Write:
     #     abort(403)
     form = CreateAddress()
+    form.submit.label.text = 'Update Address'
+
+    
     if form.validate_on_submit():
         address.address = form.address.data
         address.name = form.name.data

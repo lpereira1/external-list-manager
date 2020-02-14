@@ -17,7 +17,7 @@
                 <th></th>
             </tr>
             </thead>
-        {% for item in whitelisted_addresses %}
+        {% for item in whitelisted_addresses.items %}
         
           <tr>
             <td>{{ item.name }}</td>
@@ -54,6 +54,12 @@
         
         {% endfor %}
     </table>
-   
+   {% for page_num in whitelisted_addresses.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+   {% if page_num %}
+    <a class='btn btn-outline-info mb-4' href= "{{ url_for('startpage', page=page_num) }}">{{ page_num }} </a>
+   {% else %}
+   ...
+   {% endif%}
+   {% endfor%}
 {% endblock content %}
 

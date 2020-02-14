@@ -45,6 +45,7 @@ class CreateAddress(FlaskForm):
     organization = StringField('Customer or Organization', validators=[ DataRequired(),
                                 Length(min=2, max=140) ])
     creator_id = current_user
+    
     submit = SubmitField('Create Address')
 
     def validate_address(self, addr):
