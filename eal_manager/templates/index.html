@@ -13,21 +13,47 @@
                 <th>Organization</th>
                 <th>Created By</th>
                 <th>Created On</th>
+                <th></th>
+                <th></th>
             </tr>
             </thead>
         {% for item in whitelisted_addresses %}
         
           <tr>
             <td>{{ item.name }}</td>
-            <td>{{ item.address }}</td>
+            <td>{{ item.address }}</a></td>
             <td>{{ item.organization }}</td>
             <td>{{ item.creator_id }}</td>
             <td>{{ item.date_created.strftime('%Y-%m-%d  %H:%M') }} UTC </td>
+            <td><a href="{{ url_for('update_addr', addr_id=item.address_id)  }}"><button type="button" class="btn btn-secondary btn-sm m-1" data-toggle="modal" data-target="#editModal">Edit</button></a></td>
+            <td><button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button></a></td>
         </tr>
 
-
+ <!-- Modal -->
+ <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete Address {{ item.address }} </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <H5>This action is not reversible. Are you sure you want to remove address?</H5>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <form action="{{ url_for('delete_addr', addr_id = item.address_id )}}" method="POST">
+              <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
         
         {% endfor %}
     </table>
-    
+   
 {% endblock content %}
+

@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block content %}
+<article class="media content-section">
+      <div class="media-body">
+      <div class="article-metadata">
+        <H2 clas = "article-title">{{ address.address }}</H2>
+        <small class="text-muted">{{ address.date_created.strftime('%Y-%m-%d  %H:%M') }} UTC</small>
+          <div>
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="#">Edit</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+          </div>
+      </div>
+      <h2 class="article-title">{{ address.address }}</h2>
+      <p class="article-content">{{ address.name }}</p>
+    </div>
+  </article>
+  {% endblock %}

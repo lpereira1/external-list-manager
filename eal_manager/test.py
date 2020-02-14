@@ -1,6 +1,4 @@
-from iptools.ipv4 import validate_cidr, validate_ip
 import ipaddress
-
 
 def test_ip(address):
     if '/' in address:

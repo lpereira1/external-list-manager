@@ -93,11 +93,50 @@ def account():
 def createaddress():
     form = CreateAddress()
     if form.validate_on_submit():
-        address = IPAddress(address= form.address.data, name= form.name.data, organization=form.organization.data, creator_id = current_user.first_name + ' ' + current_user.last_name )
+        address = IPAddress(address= form.address.data, 
+                            name= form.name.data, 
+                            organization=form.organization.data,
+                            creator_id = current_user.first_name + ' ' + current_user.last_name )
         db.session.add(address)
         db.session.commit()
         flash(f'Whitelist updated with {form.address.data}!', 'success')
-    return render_template('createaddress.html', title='startpage', form=form)
+    return render_template('createaddress.html', title='startpage', form=form, legend='Create a new Address')
+
+@app.route("/address/<int:addr_id>", methods=['POST', 'GET'])
+@login_required
+def addr(addr_id):
+    address = IPAddress.query.get_or_404(addr_id)
+    return render_template('address.html', title='addr.address', address=address)
 
 
-    
+@app.route("/address/<int:addr_id>/update", methods=['POST', 'GET'])
+@login_required
+def update_addr(addr_id):
+    address = IPAddress.query.get_or_404(addr_id)
+    # Eventually we need to add a read and read/write permission here like
+    # if address.creator_id.permissions != Write:
+    #     abort(403)
+    form = CreateAddress()
+    if form.validate_on_submit():
+        address.address = form.address.data
+        address.name = form.name.data
+        address.organization = form.organization.data
+        address.creator_id = current_user.first_name + ' ' + current_user.last_name
+        db.session.commit()
+        flash('Address updated' , 'success')
+        return redirect(url_for('startpage'))
+    elif request.method == 'GET':
+        form.address.data = address.address
+        form.name.data = address.name
+        form.organization.data = address.organization
+        return render_template('createaddress.html', title='Update Address', 
+                            form=form, legend='Update Address')
+
+@app.route("/address/<int:addr_id>/delete", methods=['POST'])
+@login_required
+def delete_addr(addr_id):
+    address = IPAddress.query.get_or_404(addr_id)
+    db.session.delete(address)
+    db.session.commit()
+    flash('Address Deleted' , 'success')
+    return redirect(url_for('startpage'))
