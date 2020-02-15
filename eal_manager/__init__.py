@@ -26,4 +26,10 @@ app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
 app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
 mail = Mail(app)
 
-from eal_manager import routes
+from eal_manager.users.routes import users
+from eal_manager.main.routes import main
+from eal_manager.addresses.routes import addresses
+
+app.register_blueprint(users)
+app.register_blueprint(addresses)
+app.register_blueprint(main)
