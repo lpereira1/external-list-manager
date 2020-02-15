@@ -4,3 +4,4 @@ eal_manager/addresses.db
 eal_manager/addresses1.db
 .gitignore
 eal_manager/addresses.db
+.vscode/
