@@ -2,10 +2,11 @@ import secrets
 from PIL import Image
 import os
 from flask import render_template, flash, redirect, url_for, request
-from eal_manager.forms import RegistrationForm, CreateAddress, LoginForm, UpdateAccountForm
+from eal_manager.forms import RegistrationForm, CreateAddress, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from eal_manager.models import User, IPAddress
-from eal_manager import app, db, bcrypt
+from eal_manager import app, db, bcrypt , mail
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_mail import Message
 
 
 
@@ -105,7 +106,6 @@ def createaddress():
         flash(f'Whitelist updated with {form.address.data}!', 'success')
     return render_template('createaddress.html', title='startpage', form=form, legend='Create a new Address')
 
-@app.route("/address/<int:addr_id>", methods=['POST', 'GET'])
 @login_required
 def addr(addr_id):
     address = IPAddress.query.get_or_404(addr_id)
@@ -146,3 +146,49 @@ def delete_addr(addr_id):
     db.session.commit()
     flash('Address Deleted' , 'success')
     return redirect(url_for('startpage'))
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request', sender='test@codecraftenetwork.com', recipients=[user.email])
+    msg.body = f''' To Reset your Password visit this link: {url_for('password_reset', token=token, _external=True)}
+    If you did not make this request contact information security '''
+    print(msg.body)
+    try:
+        mail.send(msg)
+    except: 
+        flash('Error sending email. Please contact Administrator')
+
+
+@app.route("/requestreset/", methods=['POST', 'GET'])
+def request_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('startpage'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_reset_email(user)
+        flash('An email has been sent with instructions', 'info')
+        return redirect(url_for('login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+
+@app.route("/requestreset/<token>", methods=['POST', 'GET'])
+def password_reset(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('startpage'))
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('That is invalid or expired Token', 'warning')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+        db.session.commit()
+        flash(f'Password Reset successfully for {user.email}!', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', title='Reset Password', form=form)
+
+
+
+
