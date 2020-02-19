@@ -21,6 +21,7 @@ def createaddress():
         db.session.add(address)
         db.session.commit()
         flash(f'Whitelist updated with {form.address.data}!', 'success')
+        return redirect(url_for('main.startpage'))
     return render_template('createaddress.html', title='startpage', form=form, legend='Create a new Address')
 
 
@@ -58,3 +59,8 @@ def delete_addr(addr_id):
     db.session.commit()
     flash('Address Deleted' , 'success')
     return redirect(url_for('main.startpage'))
+
+@addresses.route("/address/export")
+def export_addresses():
+    return render_template('export_addresses.html' , title='Export Addresses')
+
