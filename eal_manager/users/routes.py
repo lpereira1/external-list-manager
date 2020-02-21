@@ -3,6 +3,7 @@ from flask import render_template, flash, redirect, url_for, request, Blueprint
 from eal_manager.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from eal_manager.models import User
 from eal_manager import db, bcrypt
+from eal_manager.users.utilities import send_reset_email, save_picture
 from flask_login import login_user, current_user, logout_user, login_required
 
 
