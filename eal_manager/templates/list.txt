@@ -1,0 +1,3 @@
+{% for item in addresses %}{{ item.address }}  #{{ item.name }} 
+{% endfor %}
+{# formatted above to keep additional newline characters from forming #}

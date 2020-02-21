@@ -58,3 +58,10 @@ def delete_addr(addr_id):
     db.session.commit()
     flash('Address Deleted' , 'success')
     return redirect(url_for('main.startpage'))
+
+@addresses.route("/address/list")
+@login_required
+def addr_list():
+    addresses = IPAddress.query.all()
+    return render_template('list.txt', title='plain list', addresses=addresses)
+ 
