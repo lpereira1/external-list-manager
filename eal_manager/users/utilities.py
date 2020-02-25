@@ -1,7 +1,7 @@
 import os
 import secrets
 from PIL import Image
-from flask import url_for,current_app
+from flask import url_for,current_app,flash
 from flask_mail import Message
 from eal_manager import mail
 
@@ -21,7 +21,7 @@ def save_picture(form_picture):
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request', sender='test@codecraftenetwork.com', recipients=[user.email])
-    msg.body = f''' To Reset your Password visit this link: {url_for('password_reset', token=token, _external=True)}
+    msg.body = f''' To Reset your Password visit this link: {url_for('users.password_reset', token=token, _external=True)}
     If you did not make this request contact information security '''
     print(msg.body)
     try:

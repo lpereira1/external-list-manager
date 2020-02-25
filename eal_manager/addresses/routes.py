@@ -65,4 +65,10 @@ def delete_addr(addr_id):
 def addr_list():
     addresses = IPAddress.query.all()
     return render_template('list.txt', title='plain list', addresses=addresses)
+
+@addresses.route("/address/export")
+@login_required
+def export_addresses():
+    addresses = IPAddress.query.all()
+    return render_template('list.txt', title='plain list', addresses=addresses)
  
