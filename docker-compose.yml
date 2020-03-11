@@ -1,0 +1,22 @@
+version: '3.3'
+
+services:
+    application:
+        build: ./services/application
+        command: gunicorn --bind 0.0.0.0:5000 app:app
+        #volumes:
+            #- ./service/application/:/usr/src/external-list-manager
+        expose:
+            - 5000
+        env_file:
+            ./dev_env_file
+
+    nginx:
+        build: ./services/nginx
+        ports:
+            - 80:80
+        depends_on: 
+            - application
+        
+
+            

@@ -15,9 +15,6 @@ login_manager.login_message_category = 'info'
 
 mail = Mail()
 
-# initializes our Flask Application, creates a CSRF key to protect forms and
-# initializes the sqlite database. 
-# it will pull in from multiple Flask Blueprints
 
 def create_app(config_class=Config):
     app = Flask(__name__)

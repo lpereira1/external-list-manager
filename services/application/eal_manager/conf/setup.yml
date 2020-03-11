@@ -1,0 +1,12 @@
+# Location of our Database
+---
+setup:
+    database_location: '/addresses.db'
+    default_username: 'admin@eal.local'
+    forms_secret: 'ByThePowerOfMooo'
+    mail_server: ''
+    mail_port: ''
+    tls: True
+    mail_user: ''
+    mail_password: ''
+    
