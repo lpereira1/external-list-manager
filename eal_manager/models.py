@@ -16,6 +16,7 @@ def load_user(email_id):
     return User.query.get(int(email_id))
 
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(140), nullable=False)
@@ -37,8 +38,6 @@ class User(db.Model, UserMixin):
         except:
             return None
         return User.query.get(user_id)
-
-
 
     def __repr__(self):
         return f'User("{self.email}", "{self.image_file}")'

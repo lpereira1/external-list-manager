@@ -1,5 +1,5 @@
 from PIL import Image
-from flask import render_template, flash, redirect, url_for, request, Blueprint
+from flask import render_template, flash, redirect, url_for, request, Blueprint, current_app
 from eal_manager.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from eal_manager.models import User
 from eal_manager import db, bcrypt
@@ -28,15 +28,38 @@ def register():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.startpage'))
-    form = LoginForm()
+    form = LoginForm()    
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            login_user(user, remember=form.remember.data)
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.startpage'))
+        if '@local' or '@gmail.com' in form.email.data:
+            user = User.query.filter_by(email=form.email.data).first()
+            if user and bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user, remember=form.remember.data)
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('main.startpage'))
+            else:
+               flash('Login Unsuccessful', 'danger') 
         else:
-            flash('Login Unsuccessful', 'danger')
+            #print(current_app.config.get('LDAP_USER_DN') + '----test')
+            ldap_user = ldap_manager.authenticate(form.email.data,form.password.data)
+            print(ldap_user.status)
+            
+            user_id = int(data.get("uidNumber"))
+            user=User.query.filter_by(id=user_id).first()
+            if current_app.config['LDAP_ALLOWED_GROUP'] in data.get('memberOf'):
+                user = User.query.filter_by(id=user_id).first()
+                if not user:
+                    user=User(
+                        id=int(user_id),
+                        email=data['mail'],
+                        first_name=data['givenName'],
+                        last_name=data['sn']
+                    )
+                    db.session.add(user)
+                    db.session.commit()
+                login_user(user, remember=form.remember.data)
+            else:
+                flash('Login Unsuccessful', 'danger')
+            
 
     return render_template('login.html', title='Login', form=form)
 
