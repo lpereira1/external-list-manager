@@ -22,8 +22,8 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user: 
             raise ValidationError('User already exists. Please choose another')
-        elif 'abrigo.com' not in email.data:
-            raise ValidationError('User must be an abrigo.com username to be able to access this system')
+        elif 'testdata.com' not in email.data:
+            raise ValidationError('User must be an testdata.com username to be able to access this system')
 
     
     
