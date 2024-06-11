@@ -1,7 +1,7 @@
 # Provider configuration for AWS
 provider "aws" {
   region = "us-east-1" # Adjust the region as needed
-  profile = "core-service-dev-us-east-1"
+  profile = "home-lab"
 }
 
 # Data source to get the current AWS account ID
